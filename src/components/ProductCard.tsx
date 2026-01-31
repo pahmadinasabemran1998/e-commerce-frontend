@@ -1,19 +1,33 @@
-import { type Product } from "../types/Product";
+import React from "react";
+import { getDiscountedPrice } from "../utils/discountCalculator";
 
-type ProductCardProps = {
-    product: Product;
-};
+interface ProductProps {
+    id: number;
+    title: string;
+    price: number;
+    discountPercentage: number;
+    description: string;
+    category: string;
+    thumbnail: string;
+}
 
-const ProductCard = ({ product }: ProductCardProps) => {
+const ProductCard: React.FC<ProductProps> = ({ title, price, discountPercentage, description, thumbnail, category }) => {
+    const discountedPrice = getDiscountedPrice(price, discountPercentage);
+
     return (
         <div className="product-card">
-            <h3>{product.title}</h3>
-            <p>{product.description}</p>
-
-            <div className="product-meta">
-                <span>${product.price.toFixed(2)}</span>
-                <span>{product.category}</span>
-            </div>
+            <img src={thumbnail} alt={title} />
+            <h3>{title}</h3>
+            <p>{description}</p>
+            <p>{category}</p>
+            <p>
+                Price: <span style={{ textDecoration: discountPercentage ? "line-through" : "none" }}>${price}</span>
+                {discountPercentage > 0 && (
+                    <>
+                        {" "}→ <span style={{ color: "red" }}>${discountedPrice}</span>
+                    </>
+                )}
+            </p>
         </div>
     );
 };
