@@ -1,29 +1,46 @@
 import { useEffect, useState } from "react";
-import { fetchProducts } from "../api/productApi";
 import { type Product } from "../types/Product";
+import { fetchProducts } from "../api/productApi";
+import ProductCard from "../components/ProductCard";
 
 const Products = () => {
     const [products, setProducts] = useState<Product[]>([]);
-    const [error, setError] = useState("");
+    const [loading, setLoading] = useState<boolean>(true);
+    const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
-        fetchProducts()
-            .then(setProducts)
-            .catch(() => setError("Could not load products"));
+        const loadProducts = async () => {
+            try {
+                const data  = await fetchProducts();
+                setProducts(data);
+            } catch (error) {
+                setError("Failed to load products. Please try again.");
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        loadProducts();
     }, []);
 
-    if (error) return <p>{error}</p>
+    if (loading) {
+        return <p>Loading products...</p>;
+    }
+
+    if (error) {
+        return <p className="error">{error}</p>;
+    }
 
     return (
-        <section>
+        <div className="products-page">
             <h2>Products</h2>
-            {products.map((p) => (
-                <div key={p.id}>
-                    <h3>{p.title}</h3>
-                    <p>${p.price}</p>
-                </div>
-            ))}
-        </section>
+
+            <div className="products-grid">
+                {products.map((product) => (
+                    <ProductCard key={product.id} product={product} />
+                ))}
+            </div>
+        </div>
     );
 };
 
