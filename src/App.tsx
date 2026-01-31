@@ -1,8 +1,11 @@
+import Home from "./pages/Home";
+import Products from "./pages/Products";
+
 const App = () => {
   return (
     <div className="container">
-      <h1>E-Commerce Product Management</h1>
-      <p>Frontend connected to a TypeScript backend.</p>
+      <Home />
+      <Products />
     </div>
   );
 };
